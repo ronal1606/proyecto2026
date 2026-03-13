@@ -9,4 +9,9 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('nosotros/', views.nosotros, name='nosotros'),
     path('logout/', views.logout_view, name='logout'),
+    # Módulo de Modelos ML
+    path('modelos/', views.modelos_lista, name='modelos_lista'),
+    path('modelos/crear/', views.modelo_crear, name='modelo_crear'),
+    path('modelos/<int:pk>/', views.modelo_detalle, name='modelo_detalle'),
+    path('modelos/<int:pk>/ejecutar/', views.modelo_ejecutar, name='modelo_ejecutar'),
 ]

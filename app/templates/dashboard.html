@@ -315,7 +315,7 @@
         <h1>Plataforma web para <br><span>Modelos Machine Learning</span></h1>
         <p>Una herramienta centralizada para gestionar, documentar y ejecutar los modelos de IA desarrollados por el
             Semillero de Datos y Decisiones – BIGDATALAB.</p>
-        <button class="btn-hero">Ver Modelos</button>
+        <a href="{% url 'modelos_lista' %}" class="btn-hero">Ver Modelos →</a>
     </div>
 
     <!-- Imagen SVG abstracta sobre Machine Learning a la derecha -->
@@ -380,7 +380,7 @@
             <div class="stat-icon icon-blue">🧠</div>
             <div class="stat-h-label">Modelos Activos</div>
         </div>
-        <div class="stat-h-value">0</div>
+        <div class="stat-h-value">{{ modelos_activos|default:"0" }}</div>
     </div>
 
     <div class="stat-card-horizontal">
@@ -388,15 +388,15 @@
             <div class="stat-icon icon-purple">⚡</div>
             <div class="stat-h-label">Ejecuciones Totales</div>
         </div>
-        <div class="stat-h-value">0</div>
+        <div class="stat-h-value">{{ ejecuciones_totales|default:"0" }}</div>
     </div>
 
     <div class="stat-card-horizontal">
         <div class="stat-h-left">
-            <div class="stat-icon icon-green">�</div>
+            <div class="stat-icon icon-green">📄</div>
             <div class="stat-h-label">Experimentos Documentados</div>
         </div>
-        <div class="stat-h-value">0</div>
+        <div class="stat-h-value">{{ experimentos_doc|default:"0" }}</div>
     </div>
 </div>
 

@@ -403,7 +403,8 @@
                     class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
                 <a href="{% url 'nosotros' %}"
                     class="nav-link {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}">Nosotros</a>
-                <a href="#" class="nav-link disabled" style="opacity:0.5; cursor:not-allowed;">Modelos ML</a>
+                <a href="{% url 'modelos_lista' %}"
+                    class="nav-link {% if 'modelos' in request.resolver_match.url_name %}active{% endif %}">Modelos ML</a>
             </div>
 
             <!-- User Menu Desktop (Alpine.js) -->
@@ -474,7 +475,9 @@
             <a href="{% url 'nosotros' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}"
                 @click="mobileMenuOpen = false">Nosotros</a>
-            <a href="#" class="nav-link" @click.prevent="toggleTheme()">Cambiar Tema Visual</a>
+            <a href="{% url 'modelos_lista' %}"
+                class="nav-link {% if 'modelos' in request.resolver_match.url_name %}active{% endif %}"
+                @click="mobileMenuOpen = false">Modelos ML</a>
             <a href="{% url 'logout' %}" style="color: #F87171; font-weight: bold; margin-top:10px;"
                 class="nav-link">Cerrar Sesión</a>
         </div>

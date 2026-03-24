@@ -1,4 +1,12 @@
 {% extends "base.html" %}
+{% comment %}
+============================================================
+nosotros.html — Información Institucional y del Proyecto
+============================================================
+Propósito: Explica la justificación, solución y alcance
+del proyecto BIGDATALAB, así como los autores y tecnología.
+============================================================
+{% endcomment %}
 
 {% block title %}Nosotros | BIGDATALAB{% endblock %}
 
@@ -106,7 +114,7 @@
 </div>
 
 <div class="about-grid">
-    <!-- El Problema / Justificación -->
+    {% comment %} El Problema / Justificación {% endcomment %}
     <div class="m-card">
         <div class="about-section">
             <h2>
@@ -129,7 +137,7 @@
         </div>
     </div>
 
-    <!-- La Solución / Proyecto -->
+    {% comment %} La Solución / Proyecto {% endcomment %}
     <div class="m-card">
         <div class="about-section">
             <h2>
@@ -158,7 +166,7 @@
     </div>
 </div>
 
-<!-- Información Institucional -->
+{% comment %} Información Institucional {% endcomment %}
 <div class="m-card">
     <div class="about-section" style="text-align: center; max-width: 800px; margin: 0 auto;">
         <h2>

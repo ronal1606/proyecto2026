@@ -172,10 +172,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # URL para acceder a los archivos estáticos
 STATIC_URL = '/static/'
 
-# # Directorio donde guardarás los archivos estáticos
-# STATICFILES_DIRS = [
-#     BASE_DIR / "static",
-# ]
+# Directorio donde guardarás los archivos estáticos
+STATICFILES_DIRS = [
+    BASE_DIR / "app" / "static",
+]
 
 
 

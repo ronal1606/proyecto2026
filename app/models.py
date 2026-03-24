@@ -1,21 +1,77 @@
+"""
+models.py — Definición de la Base de Datos (Modelos)
+===================================================
+Este archivo define la estructura de datos de BIGDATALAB usando el ORM de Django.
+Se divide en tres pilares:
+  1. Perfiles de Usuario: Extensión del modelo User de Django para roles y 2FA.
+  2. Gestión de Archivos: Almacenamiento genérico de documentos.
+  3. Catálogo de Modelos ML: Modelos ONNX/PKL, metadatos técnicos y telemetría.
+
+Además, contiene 'Signals' (señales) para la limpieza automática de archivos
+físicos cuando se eliminan o actualizan registros en la BD.
+"""
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
 
 
+# ============================================================
+# 0. CATÁLOGO DE CATEGORÍAS (dinámico)
+# ============================================================
+
+# Lista de categorías predefinidas para sembrar la BD al inicio
+CATEGORIAS_PREDEFINIDAS = [
+    'fresa', 'cacao', 'manzana', 'tomate', 'café', 'plátano', 'palma'
+]
+
+class Categoria(models.Model):
+    """Categoría de un modelo ML. El administrador puede agregar nuevas al subir un modelo."""
+    nombre = models.CharField(max_length=100, unique=True, verbose_name='Nombre')
+
+    class Meta:
+        ordering = ['nombre']
+        verbose_name = 'Categoría'
+        verbose_name_plural = 'Categorías'
+
+    def __str__(self):
+        return self.nombre.capitalize()
+
+
+# ============================================================
+# 1. PERFILES Y ROLES DE USUARIO
+# ============================================================
+
 class UserProfile(models.Model):
+    # Roles disponibles en la plataforma
+    ROL_CHOICES = [
+        ('admin', 'Administrador'),  # Puede crear, editar y eliminar modelos
+        ('user',  'Usuario'),        # Solo puede ver y ejecutar (consumir) modelos
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     otp_code = models.CharField(max_length=6, blank=True, null=True)
     otp_created_at = models.DateTimeField(blank=True, null=True)
 
+    # Rol del usuario dentro de la plataforma (independiente del sistema de permisos de Django)
+    rol = models.CharField(max_length=10, choices=ROL_CHOICES, default='user',
+                           verbose_name='Rol')
+
     def __str__(self):
-        return f"Perfil de {self.user.username}"
+        return f"Perfil de {self.user.username} ({self.get_rol_display()})"
+
+    def es_admin(self):
+        """Devuelve True si el usuario tiene rol de administrador o es superusuario de Django."""
+        return self.rol == 'admin' or self.user.is_superuser
+
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        # Los superusuarios de Django obtienen rol admin automáticamente
+        rol_inicial = 'admin' if instance.is_superuser else 'user'
+        UserProfile.objects.create(user=instance, rol=rol_inicial)
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
@@ -36,16 +92,6 @@ class Archivo(models.Model):
 
 # Catálogo de Modelos Machine Learning
 class ModeloML(models.Model):
-    CATEGORIA_CHOICES = [
-        ('fresa', 'Fresa'),
-        ('cacao', 'Cacao'),
-        ('manzana', 'Manzana'),
-        ('tomate', 'Tomate'),
-        ('cafe', 'Café'),
-        ('platano', 'Plátano'),
-        ('otro', 'Otro'),
-    ]
-
     ESTADO_CHOICES = [
         ('activo', 'Activo'),
         ('inactivo', 'Inactivo'),
@@ -55,7 +101,8 @@ class ModeloML(models.Model):
     nombre = models.CharField(max_length=255)
     nombre_estudio = models.CharField(max_length=255, verbose_name='Nombre del Estudio')
     descripcion = models.TextField()
-    categoria = models.CharField(max_length=50, choices=CATEGORIA_CHOICES)
+    # Categoría libre (sin choices fijos) — se relaciona con el modelo Categoria
+    categoria = models.CharField(max_length=100)
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activo')
 
     archivo_modelo = models.FileField(
@@ -122,7 +169,7 @@ class ModeloML(models.Model):
         verbose_name_plural = 'Modelos ML'
 
     def __str__(self):
-        return f"{self.nombre} ({self.get_categoria_display()})"
+        return self.nombre
 
 
 from django.db.models.signals import post_delete, pre_save

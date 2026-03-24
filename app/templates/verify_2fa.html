@@ -1,10 +1,19 @@
 <!DOCTYPE html>
+{% comment %}
+============================================================
+verify_2fa.html — Verificación de Dos Pasos
+============================================================
+Propósito: Segunda capa de seguridad tras el login.
+Valida el código OTP de 6 dígitos enviado por correo.
+============================================================
+{% endcomment %}
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BIGDATALAB - Verificación 2FA</title>
-    <!-- Alpine.js -->
+    {% comment %} Alpine.js {% endcomment %}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -244,12 +253,12 @@
         </svg>
     </button>
     
-    <div class="bg-container">
+    {% comment %} Background Animated {% endcomment %}
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
     </div>
 
-    <!-- Global Messages Toast -->
+    {% comment %} Global Messages Toast {% endcomment %}
     {% if messages %}
     <div class="global-alerts">
         {% for message in messages %}
@@ -277,7 +286,7 @@
     {% endif %}
 
     <div class="split-layout">
-        <!-- Hero Section -->
+        {% comment %} Hero Section {% endcomment %}
         <div class="hero-section">
             <div class="hero-content">
                 <div class="badge">
@@ -298,7 +307,7 @@
             </div>
         </div>
 
-        <!-- Form Section -->
+        {% comment %} Form Section {% endcomment %}
         <div class="form-section">
             <div class="glass-panel">
                 <div class="form-header">

@@ -1,7 +1,7 @@
 """
 models.py — Definición de la Base de Datos (Modelos)
 ===================================================
-Este archivo define la estructura de datos de BIGDATALAB usando el ORM de Django.
+Este archivo define la estructura de datos de AgroVision usando el ORM de Django.
 Se divide en tres pilares:
   1. Perfiles de Usuario: Extensión del modelo User de Django para roles y 2FA.
   2. Gestión de Archivos: Almacenamiento genérico de documentos.
@@ -212,4 +212,68 @@ def actualizar_archivos_modeloml(sender, instance, **kwargs):
         if old_instance.documento_estudio and old_instance.documento_estudio != instance.documento_estudio:
             old_instance.documento_estudio.delete(save=False)
     except ModeloML.DoesNotExist:
-        pass
+        pass
+
+
+# ============================================================
+# 4. HISTORIAL DE EJECUCIONES
+# ============================================================
+
+class HistorialEjecucion(models.Model):
+    """
+    Registra cada vez que un usuario ejecuta (consume) un modelo ML.
+    Guarda la imagen subida, la ubicación indicada por el usuario,
+    el resultado de la inferencia y el modelo utilizado.
+    La imagen se almacena en el backend configurado (Azure/local).
+    """
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='historial_ejecuciones',
+        verbose_name='Usuario'
+    )
+    modelo = models.ForeignKey(
+        ModeloML,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='historial_ejecuciones',
+        verbose_name='Modelo usado'
+    )
+    # Imagen subida por el usuario para la inferencia
+    imagen = models.ImageField(
+        upload_to='historial_imagenes/',
+        verbose_name='Imagen de entrada'
+    )
+    # Ubicación indicada por el usuario (ej: "Finca El Diamante")
+    ubicacion = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+        verbose_name='Ubicación'
+    )
+    # Resultado textual de la inferencia (ej: "Fresa Sana (92.4%)")
+    resultado = models.TextField(
+        blank=True,
+        default='',
+        verbose_name='Resultado'
+    )
+    fecha_ejecucion = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de ejecución'
+    )
+
+    class Meta:
+        ordering = ['-fecha_ejecucion']
+        verbose_name = 'Historial de Ejecución'
+        verbose_name_plural = 'Historial de Ejecuciones'
+
+    def __str__(self):
+        modelo_nombre = self.modelo.nombre if self.modelo else 'Modelo eliminado'
+        return f"{self.usuario.username} — {modelo_nombre} ({self.fecha_ejecucion.strftime('%d/%m/%Y %H:%M')})"
+
+
+# Señal: al eliminar un registro de historial, borra la imagen del almacenamiento
+@receiver(post_delete, sender=HistorialEjecucion)
+def eliminar_imagen_historial(sender, instance, **kwargs):
+    if instance.imagen:
+        instance.imagen.delete(False)

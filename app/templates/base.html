@@ -404,21 +404,23 @@ Características:
     {% comment %} Navbar {% endcomment %}
     <nav class="navbar">
         <div class="nav-container">
-            {% comment %} Brand — Logo ISER + BIGDATALAB {% endcomment %}
+            {% comment %} Brand — Logo ISER + AgroVision {% endcomment %}
             <a href="{% url 'dashboard' %}" class="nav-brand">
                 {% load static %}
                 <img src="{% static 'img/iser_logo2.png' %}" alt="Logo ISER" style="width:36px; height:36px; border-radius:8px; object-fit:cover;">
-                <div class="brand-text">BIGDATA<span>LAB</span></div>
+                <div class="brand-text">Agro<span>Vision</span></div>
             </a>
 
             {% comment %} Desktop Links {% endcomment %}
             <div class="nav-links">
                 <a href="{% url 'dashboard' %}"
                     class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="{% url 'nosotros' %}"
-                    class="nav-link {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}">Nosotros</a>
                 <a href="{% url 'modelos_lista' %}"
                     class="nav-link {% if 'modelos' in request.resolver_match.url_name %}active{% endif %}">Modelos ML</a>
+                <a href="{% url 'historial_lista' %}"
+                    class="nav-link {% if 'historial' in request.resolver_match.url_name %}active{% endif %}">Historial</a>
+                <a href="{% url 'nosotros' %}"
+                    class="nav-link {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}">Nosotros</a>
             </div>
 
             {% comment %} User Menu Desktop (Alpine.js) {% endcomment %}
@@ -492,12 +494,15 @@ Características:
             <a href="{% url 'dashboard' %}"
                 class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
                 @click="mobileMenuOpen = false">Dashboard</a>
-            <a href="{% url 'nosotros' %}"
-                class="nav-link {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}"
-                @click="mobileMenuOpen = false">Nosotros</a>
             <a href="{% url 'modelos_lista' %}"
                 class="nav-link {% if 'modelos' in request.resolver_match.url_name %}active{% endif %}"
                 @click="mobileMenuOpen = false">Modelos ML</a>
+            <a href="{% url 'historial_lista' %}"
+                class="nav-link {% if 'historial' in request.resolver_match.url_name %}active{% endif %}"
+                @click="mobileMenuOpen = false">Historial</a>
+            <a href="{% url 'nosotros' %}"
+                class="nav-link {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}"
+                @click="mobileMenuOpen = false">Nosotros</a>
             <a href="{% url 'logout' %}" style="color: #F87171; font-weight: bold; margin-top:10px;"
                 class="nav-link">Cerrar Sesión</a>
         </div>

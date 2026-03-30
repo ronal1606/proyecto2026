@@ -13,7 +13,7 @@ Contexto:
 ============================================================
 {% endcomment %}
 
-{% block title %}Ejecutar: {{ modelo.nombre }} — BIGDATALAB{% endblock %}
+{% block title %}Ejecutar: {{ modelo.nombre }} — AgroVision{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -152,9 +152,20 @@ Contexto:
                         <img id="image-preview" src="#" alt="Vista previa">
                     </div>
 
+                    {# Campo de ubicación (finca, lote, sector) — requerido #}
+                    <div style="margin-top: 1.25rem;">
+                        <label for="ubicacion" style="font-size: 0.85rem; font-weight: 600; color: #CBD5E1; display: block; margin-bottom: 0.4rem;">
+                            📍 Ubicación (requerido)
+                        </label>
+                        <input type="text" id="ubicacion" name="ubicacion" required
+                               placeholder="Ej: Finca El Diamante, Lote 3"
+                               style="width:100%; padding:0.75rem 1rem; background:rgba(15,23,42,0.5); border:1px solid rgba(255,255,255,0.1); border-radius:10px; color:#F8FAFC; font-size:0.9rem; font-family:'Outfit',sans-serif; outline:none;">
+                        <small style="color: var(--text-muted); font-size:0.78rem;">Indica el lugar exacto donde se está aplicando el modelo.</small>
+                    </div>
+
                     {# Botón de ejecutar — oculto por CSS, se muestra por JS al seleccionar imagen #}
                     <button type="submit" class="btn-submit" id="btn-ejecutar">
-                        <div class="loader" id="loader"></div> {# Spinner animado durante el procesamiento #}
+                        <div class="loader" id="loader"></div>
                         <span>Ejecutar Modelo</span>
                     </button>
                 </form>
@@ -183,11 +194,9 @@ Contexto:
                                 <span>Porcentaje de Confianza</span>
                                 <strong>{{ resultado.confianza }}%</strong>
                             </div>
-                            {# La barra de progreso — el ancho se setea en JS con el valor del data attribute #}
                             <div class="confianza-barra">
                                 <div class="confianza-nivel" data-confianza="{{ resultado.confianza }}"></div>
                             </div>
-                            {# Script inline para setear el width de la barra de confianza desde el data attribute #}
                             <script>
                                 (function() {
                                     var nivel = document.querySelector('.confianza-nivel:last-of-type');
@@ -197,6 +206,11 @@ Contexto:
                                 })();
                             </script>
                         </div>
+                        {# Enlace al historial para ver el registro guardado #}
+                        <a href="{% url 'historial_lista' %}" style="display:inline-flex; align-items:center; gap:0.5rem; margin-top:1.75rem; padding:0.65rem 1.25rem; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:10px; color:#34D399; font-size:0.87rem; font-weight:600; text-decoration:none;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Ver en Historial
+                        </a>
                     {% else %}
                         {# Estado vacío: el usuario aún no ha enviado ninguna imagen #}
                         <div class="resultado-vacio">

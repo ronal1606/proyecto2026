@@ -55,7 +55,12 @@ urlpatterns = [
     path('modelos/<int:pk>/editar/', views.modelo_editar, name='modelo_editar'),
     # Eliminar un modelo del catálogo (solo admin, acepta solo POST)
     path('modelos/<int:pk>/eliminar/', views.modelo_eliminar, name='modelo_eliminar'),
-    
+
+    # ── Historial de Ejecuciones ─────────────────────────────────────────────
+    path('historial/', views.historial_lista, name='historial_lista'),
+    path('historial/<int:pk>/', views.historial_detalle, name='historial_detalle'),
+    path('historial/<int:pk>/eliminar/', views.historial_eliminar, name='historial_eliminar'),
+
     # Catch-all route to protect against invalid URLs
     re_path(r'^.*$', views.ruta_no_encontrada),
 ]

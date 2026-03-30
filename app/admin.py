@@ -21,4 +21,4 @@ class ModeloMLAdmin(admin.ModelAdmin):
     ordering = ('-fecha_creacion',)
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
 
-admin.site.register(ModeloML, ModeloMLAdmin)
+admin.site.register(ModeloML, ModeloMLAdmin)

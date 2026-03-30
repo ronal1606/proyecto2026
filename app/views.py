@@ -1,5 +1,5 @@
 """
-views.py — Lógica de negocio de la aplicación BIGDATALAB
+views.py — Lógica de negocio de la aplicación AgroVision
 =========================================================
 Contiene TODAS las vistas (controladores) que procesan peticiones HTTP
 y devuelven respuestas HTML a los templates.
@@ -91,7 +91,7 @@ def index(request):
             from django.template.loader import render_to_string
             from django.utils.html import strip_tags
 
-            subject = '🔑 Tu código de verificación - BIGDATALAB'
+            subject = '🔑 Tu código de verificación - AgroVision'
             # Renderiza el template email_2fa.html con el nombre y el código OTP
             html_message = render_to_string('email_2fa.html', {
                 'nombre': user.first_name or user.username,
@@ -201,14 +201,14 @@ def dashboard(request):
       - experimentos_doc:    Modelos que tienen documento de estudio adjunto.
       - ejecuciones_totales: Estimación simulada (modelos × 12).
     """
-    from app.models import ModeloML
+    from app.models import ModeloML, HistorialEjecucion
 
     # Conteo de modelos activos (los que se pueden ejecutar en producción)
     modelos_activos = ModeloML.objects.filter(estado='activo').count()
     # Modelos que tienen un documento PDF de estudios académicos adjunto
     experimentos_doc = ModeloML.objects.exclude(documento_estudio='').count()
-    # Simulación de ejecuciones totales (no existe tabla de logs aún)
-    ejecuciones_totales = ModeloML.objects.count() * 12
+    # Total real de ejecuciones registradas en el historial
+    ejecuciones_totales = HistorialEjecucion.objects.count()
 
     context = {
         'modelos_activos': modelos_activos,
@@ -232,7 +232,7 @@ def logout_view(request):
 @login_required(login_url='index')
 def nosotros(request):
     """
-    Página de información del semillero BIGDATALAB.
+    Página de información del semillero AgroVision.
     Solo renderiza el template estático nosotros.html.
     """
     return render(request, 'nosotros.html')
@@ -760,18 +760,35 @@ def modelo_ejecutar(request, pk):
                 # Empaquetar el resultado final para el template
                 resultado = {
                     'clase': clase_nombre,
-                    'confianza': round(confianza_pct, 2)  # Redondear a 2 decimales
+                    'confianza': round(confianza_pct, 2)
                 }
+
+                # ── Guardar en historial de ejecuciones ───────────────────────
+                # La imagen original se sube al almacenamiento (Azure/local)
+                # junto con la ubicación y el resultado textual.
+                try:
+                    from app.models import HistorialEjecucion
+                    ubicacion = request.POST.get('ubicacion', '').strip()
+                    # Rewind the file to read it again for storage
+                    imagen.seek(0)
+                    HistorialEjecucion.objects.create(
+                        usuario=request.user,
+                        modelo=modelo,
+                        imagen=imagen,
+                        ubicacion=ubicacion,
+                        resultado=f"{clase_nombre} ({round(confianza_pct, 2)}%)"
+                    )
+                except Exception as hist_err:
+                    # Guardar historial es no-bloqueante: si falla, no interrumpimos la inferencia
+                    pass
 
                 # ── Limpieza: borrar archivo temporal si se descargó ──────────
                 if file_url.startswith('http') and os.path.exists(onnx_path):
                     os.remove(onnx_path)
 
             except Exception as e:
-                # Capturar cualquier error durante preprocesamiento o inferencia
                 error = f"Error durante la inferencia: {str(e)}"
 
-    # Renderizar la página con el resultado (o None si fue GET, o hay error)
     return render(request, 'modelo_ejecutar.html', {
         'modelo': modelo,
         'resultado': resultado,
@@ -798,7 +815,87 @@ def pagina_404(request, exception):
 def ruta_no_encontrada(request):
     """
     Vista catch-all: captura cualquier URL no definida en urlpatterns.
-    Renderiza la plantilla 404.html con código de estado 404,
-    sin importar si DEBUG está en True o False.
+    Renderiza la plantilla 404.html con código de estado 404.
     """
     return render(request, '404.html', status=404)
+
+
+# ============================================================
+# 4. HISTORIAL DE EJECUCIONES
+# ============================================================
+
+@login_required(login_url='index')
+def historial_lista(request):
+    """
+    Muestra el historial de ejecuciones del usuario (o de todos los usuarios si es admin).
+    Soporta paginación: el usuario puede elegir ver 5, 10 o 25 registros por página.
+    El admin ve todos los registros con el nombre del usuario que ejecutó.
+    """
+    from app.models import HistorialEjecucion
+    from django.core.paginator import Paginator
+
+    if es_admin(request.user):
+        qs = HistorialEjecucion.objects.select_related('usuario', 'modelo').all()
+    else:
+        qs = HistorialEjecucion.objects.select_related('usuario', 'modelo').filter(usuario=request.user)
+
+    per_page = int(request.GET.get('per_page', 10))
+    if per_page not in [5, 10, 25]:
+        per_page = 10
+
+    paginator = Paginator(qs, per_page)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'historial_lista.html', {
+        'page_obj': page_obj,
+        'per_page': per_page,
+        'total': qs.count(),
+        'es_admin': es_admin(request.user),
+    })
+
+
+@login_required(login_url='index')
+def historial_detalle(request, pk):
+    """
+    Muestra toda la información de una ejecución en detalle:
+    imagen completa, resultado, ubicación, modelo y fecha.
+    Los usuarios solo pueden ver las suyas; el admin puede ver cualquiera.
+    """
+    from app.models import HistorialEjecucion
+
+    historial = get_object_or_404(HistorialEjecucion, pk=pk)
+
+    # Verificar que el user sólo accede a lo suyo (admin puede ver todo)
+    if not es_admin(request.user) and historial.usuario != request.user:
+        messages.error(request, 'No tienes permiso para ver esta ejecución.')
+        return redirect('historial_lista')
+
+    return render(request, 'historial_detalle.html', {
+        'historial': historial,
+        'es_admin': es_admin(request.user),
+    })
+
+
+@login_required(login_url='index')
+def historial_eliminar(request, pk):
+    """
+    Elimina un registro de historial de ejecución.
+    El usuario solo puede eliminar los suyos; el admin puede eliminar cualquiera.
+    Solo acepta POST para evitar eliminaciones accidentales por GET.
+    La señal post_delete del modelo borra la imagen del almacenamiento automáticamente.
+    """
+    from app.models import HistorialEjecucion
+
+    historial = get_object_or_404(HistorialEjecucion, pk=pk)
+
+    if not es_admin(request.user) and historial.usuario != request.user:
+        messages.error(request, 'No tienes permiso para eliminar esta ejecución.')
+        return redirect('historial_lista')
+
+    if request.method == 'POST':
+        historial.delete()
+        messages.success(request, 'Ejecución eliminada del historial correctamente.')
+        return redirect('historial_lista')
+
+    return redirect('historial_detalle', pk=pk)

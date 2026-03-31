@@ -1,0 +1,122 @@
+@startuml UC_Gestion_Modelos
+title AgroVision — Casos de Uso: Gestión de Modelos ML
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+skinparam usecase {
+  BackgroundColor #FFF3E0
+  BorderColor #E65100
+  ArrowColor #BF360C
+  ActorBackgroundColor #FFE0B2
+  ActorBorderColor #E65100
+  FontSize 12
+}
+
+' ─────────────────────────── ACTORES ────────────────────────────
+actor "Usuario\nAutenticado" as U #LightGreen
+actor "Administrador" as Admin #LightCoral
+
+Admin -|> U : hereda
+
+' ─────────────────────────── SISTEMA ────────────────────────────
+rectangle "Módulo de Gestión de Modelos ML" {
+
+  usecase "UC07 — Ver Catálogo\nde Modelos" as UC07
+  note right of UC07
+    Muestra lista de todos los modelos
+    con nombre, categoría, estado
+    y porcentaje de precisión.
+    Accesible para todos los usuarios
+    autenticados.
+  end note
+
+  usecase "UC08 — Crear Modelo ML" as UC08
+  note right of UC08
+    Solo Administrador.
+    Campos requeridos:
+    • Nombre, nombre de estudio,
+      descripción, categoría
+    • Archivo modelo (.onnx / .pkl)
+    • Configuración de inferencia:
+      – Dimensiones imagen (ancho×alto)
+      – Espacio de color (RGB/Escala de grises)
+      – Inversión de colores
+      – Nombres de clases (separados por coma)
+    Campos opcionales:
+    • Documento PDF del estudio
+    • Porcentaje de precisión
+  end note
+
+  usecase "UC09 — Ver Detalle\nde Modelo" as UC09
+  note right of UC09
+    Muestra todos los campos del modelo,
+    enlace de descarga al archivo .onnx/.pkl
+    y al PDF del estudio (si existe).
+  end note
+
+  usecase "UC10 — Editar Modelo ML" as UC10
+  note right of UC10
+    Solo Administrador.
+    Precondición: modelo debe existir.
+    Permite actualizar cualquier campo,
+    incluyendo reemplazar archivos
+    (se eliminan los anteriores).
+  end note
+
+  usecase "UC11 — Eliminar Modelo ML" as UC11
+  note right of UC11
+    Solo Administrador.
+    Elimina el registro y también
+    los archivos del modelo y del
+    estudio del almacenamiento.
+  end note
+
+  usecase "UC12 — Buscar / Filtrar\nModelos" as UC12
+  note right of UC12
+    Búsqueda por texto libre en:
+    nombre, nombre de estudio,
+    descripción.
+    Filtro por categoría (fresa,
+    tomate, café, manzana, etc.).
+  end note
+
+  usecase "UC12a — Buscar por Texto" as UC12a
+  usecase "UC12b — Filtrar por Categoría" as UC12b
+
+  usecase "UC13 — Gestionar Categorías" as UC13
+  note right of UC13
+    Solo Administrador.
+    Permite agregar categorías
+    personalizadas al momento de
+    crear o editar un modelo.
+    Categorías predefinidas: fresa,
+    cacao, manzana, tomate, café,
+    plátano, palma.
+  end note
+}
+
+' ─────────────────────────── RELACIONES ─────────────────────────
+
+' Usuario general
+U --> UC07
+U --> UC09
+U --> UC12
+
+' Búsqueda descompuesta
+UC12 ..> UC12a : <<extend>>\n[búsqueda por texto]
+UC12 ..> UC12b : <<extend>>\n[filtro por categoría]
+UC07 ..> UC12 : <<include>>
+
+' Administrador
+Admin --> UC08
+Admin --> UC10
+Admin --> UC11
+Admin --> UC13
+
+' Gestión de categorías se incluye en crear/editar
+UC08 ..> UC13 : <<extend>>\n[si agrega nueva\ncategoría]
+UC10 ..> UC13 : <<extend>>\n[si agrega nueva\ncategoría]
+
+@enduml

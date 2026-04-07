@@ -21,6 +21,7 @@ Se organiza en:
   4. Inferencia: Interfaz para ejecutar predicciones ONNX.
 """
 from django.urls import path, re_path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -33,6 +34,15 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     # Verificación del código OTP enviado por e-mail (2FA)
     path('verify-2fa/', views.verify_2fa, name='verify_2fa'),
+
+    # ── Recuperación de Contraseña (Auth Views nativas) ─────────────────────
+    path('password_reset/', auth_views.PasswordResetView.as_view(
+        template_name='auth_recover/password_reset_form.html',
+        email_template_name='auth_recover/password_reset_email.html'
+    ), name='password_reset'),
+    path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(template_name='auth_recover/password_reset_done.html'), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='auth_recover/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='auth_recover/password_reset_complete.html'), name='password_reset_complete'),
 
     # ── Secciones principales ────────────────────────────────────────────────
     # Panel principal del usuario (requiere login)

@@ -487,7 +487,10 @@ Características:
                     </div>
 
                     <div class="input-group">
-                        <label for="password">Contraseña</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <label for="password" style="margin-bottom: 0;">Contraseña</label>
+                            <a href="{% url 'password_reset' %}" style="color: var(--theme-link-color); font-size: 0.85rem; text-decoration: none; font-weight: 500;">¿Olvidaste tu contraseña?</a>
+                        </div>
                         <div class="input-wrapper">
                             <input type="password" id="password" name="password" class="input-field"
                                 placeholder="••••••••" required>

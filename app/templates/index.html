@@ -491,9 +491,13 @@ Características:
                             <label for="password" style="margin-bottom: 0;">Contraseña</label>
                             <a href="{% url 'password_reset' %}" style="color: var(--theme-link-color); font-size: 0.85rem; text-decoration: none; font-weight: 500;">¿Olvidaste tu contraseña?</a>
                         </div>
-                        <div class="input-wrapper">
-                            <input type="password" id="password" name="password" class="input-field"
+                        <div class="input-wrapper" x-data="{ show: false }" style="position: relative;">
+                            <input :type="show ? 'text' : 'password'" id="password" name="password" class="input-field"
                                 placeholder="••••••••" required>
+                            <button type="button" @click="show = !show" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                                <svg x-show="!show" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                <svg x-show="show" style="display: none;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                            </button>
                         </div>
                     </div>
 

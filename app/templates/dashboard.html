@@ -412,48 +412,217 @@ Secciones:
     </div>
 </div>
 
-<h3 class="section-title">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        style="color:var(--text-muted)">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-    </svg>
-    Accesos Rápidos
-</h3>
+<!-- Fin de la sección de estadísticas generales -->
 
-{% comment %} Action Cards {% endcomment %}
-<div class="action-grid">
-    <div class="action-card" style="opacity: 0.7; cursor: not-allowed;">
-        <div class="action-card-header">
-            <div class="action-icon-small">🧠</div>
-            <h3>Catálogo de Modelos</h3>
+{% comment %}
+============================================================
+FOOTER DE DASHBOARD (EXCLUSIVO)
+============================================================
+Footer renderizado únicamente en el dashboard que mantiene la estética verde ("Institucional") y 
+disposición en 4 columnas separadas por líneas según el boceto solicitado,
+incorporando información base para la Universidad de Pamplona.
+============================================================
+{% endcomment %}
+<style>
+    .dashboard-footer {
+        margin-top: 4rem;
+        background-color: var(--primary); /* Verde principal (#10B981) o usar #009688 */
+        border-radius: 12px 12px 12px 12px;
+        overflow: hidden;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    
+    .footer-main-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2.5rem 3rem;
+        gap: 1.5rem;
+    }
+    
+    .footer-col {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    /* Separadores verticales entre columnas */
+    .footer-col:not(:last-child) {
+        border-right: 1px solid rgba(255,255,255,0.4);
+        padding-right: 1.5rem;
+    }
+
+    .footer-icon-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3rem;
+    }
+    
+    .footer-icon-wrapper svg {
+        opacity: 0.9;
+    }
+    
+    .footer-col-text {
+        font-size: 0.77rem;
+        line-height: 1.35;
+        color: rgba(255,255,255,0.95);
+        flex: 1;
+    }
+    
+    .footer-col-title {
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Franja oscura inferior */
+    .footer-sub-bar {
+        background-color: rgba(0, 0, 0, 0.15); /* Efecto oscurecedor automático */
+        padding: 0.8rem;
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    
+    .footer-sub-bar a {
+        color: rgba(255,255,255,0.7);
+        text-decoration: none;
+        margin: 0 0.5rem;
+        transition: color 0.3s;
+    }
+    
+    .footer-sub-bar a:hover {
+        color: white;
+    }
+    
+    .footer-logo {
+        font-size: 1.5rem;
+        font-style: italic;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        line-height: 1;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    /* Suscripción input */
+    .subscribe-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    .subscribe-group input {
+        width: 100%;
+        padding: 0.4rem 0.6rem;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        font-size: 0.85rem;
+        color: #333;
+    }
+    
+    .subscribe-group button {
+        background: rgba(255,255,255,0.3);
+        color: white;
+        border: none;
+        padding: 0.3rem 0;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 0.3s;
+        width: 100px;
+        align-self: flex-end;
+    }
+    
+    .subscribe-group button:hover {
+        background: white;
+        color: var(--primary);
+    }
+    
+    @media (max-width: 968px) {
+        .footer-col:not(:last-child) {
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+            padding-right: 0;
+            padding-bottom: 1.5rem;
+        }
+        .footer-main-bar {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .subscribe-group button {
+            align-self: flex-start;
+        }
+    }
+</style>
+
+<div class="dashboard-footer">
+    <div class="footer-main-bar">
+        
+        <!-- Columna 1: Logo -->
+        <div class="footer-col" style="flex: 0.5;">
+            <div class="footer-logo">
+                AGRO<br>VISION
+            </div>
         </div>
-        <p>Explora, busca y ejecuta los modelos de IA desarrollados y avalados por el semillero AgroVision.</p>
-        <div class="action-footer" style="color: var(--text-muted)">
-            Próximamente
+        
+        <!-- Columna 2: Contacto -->
+        <div class="footer-col" style="flex: 1.2;">
+            <div class="footer-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span class="footer-col-title">Contacto</span>
+            </div>
+            <div class="footer-col-text">
+                <strong>Semillero de Investigación</strong><br>
+                ISER<br>
+                Norte de Santander, Colombia. Impulsando la IA aplicada al sector agrícola.
+            </div>
         </div>
+        
+        <!-- Columna 3: Síguenos -->
+        <div class="footer-col" style="flex: 1.2;">
+            <div class="footer-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                <span class="footer-col-title">Síguenos</span>
+            </div>
+            <div class="footer-col-text">
+                Encuéntranos en nuestras redes para conocer más de los proyectos institucionales de Inteligencia Artificial.
+            </div>
+        </div>
+        
+        <!-- Columna 4: Suscríbete -->
+        <div class="footer-col" style="border-right: none; flex: 1.2;" x-data="{ email: '' }">
+            <div class="footer-icon-wrapper" style="margin-right: 0.5rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+                <span class="footer-col-title" style="font-size: 0.70rem;">Suscríbete</span>
+            </div>
+            <div class="subscribe-group">
+                <input type="email" x-model="email" placeholder="Tu correo aquí...">
+                <button type="button" @click="if(email){ alert('¡Gracias por unirte al Semillero!'); email=''; } else { alert('Por favor, ingresa un correo.'); }">Suscribirme</button>
+            </div>
+        </div>
+        
     </div>
-
-    <div class="action-card" style="opacity: 0.7; cursor: not-allowed;">
-        <div class="action-card-header">
-            <div class="action-icon-small">📈</div>
-            <h3>Resultados (Métricas)</h3>
-        </div>
-        <p>Accede al panel de documentación interactiva para revisar la precisión y resultados históricos de
-            experimentos.</p>
-        <div class="action-footer" style="color: var(--text-muted)">
-            Próximamente
-        </div>
-    </div>
-
-    <div class="action-card" style="opacity: 0.7; cursor: not-allowed;">
-        <div class="action-card-header">
-            <div class="action-icon-small">⬆️</div>
-            <h3>Subir Documentación</h3>
-        </div>
-        <p>Administra los archivos base o datasets semilla de forma centralizada.</p>
-        <div class="action-footer" style="color: var(--text-muted)">
-            Próximamente
-        </div>
+    
+    <!-- Barra Inferior -->
+    <div class="footer-sub-bar">
+        <a href="#">Términos Institucionales</a> | 
+        <a href="#">Privacidad Académica</a> | 
+        <a href="{% url 'nosotros' %}">Acerca de AgroVision</a> | 
+        <a href="#">ISER</a>
     </div>
 </div>
+
 {% endblock %}

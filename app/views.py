@@ -109,7 +109,7 @@ def index(request):
                     html_message=html_message,
                     fail_silently=False,
                 )
-                messages.info(request, f'Se ha enviado un código de verificación a {user.email}')
+                messages.info(request, 'Se ha enviado un código de verificación a tu correo.')
             except Exception as e:
                 # Si el SMTP no está configurado, se avisa al usuario pero no se bloquea el flujo
                 messages.error(request, 'Aviso: No se pudo enviar el correo real (revisa tu consola de servidor o configura SMTP en .env).')

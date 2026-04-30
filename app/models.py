@@ -220,12 +220,6 @@ def actualizar_archivos_modeloml(sender, instance, **kwargs):
 # ============================================================
 
 class HistorialEjecucion(models.Model):
-    """
-    Registra cada vez que un usuario ejecuta (consume) un modelo ML.
-    Guarda la imagen subida, la ubicación indicada por el usuario,
-    el resultado de la inferencia y el modelo utilizado.
-    La imagen se almacena en el backend configurado (Azure/local).
-    """
     usuario = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

@@ -9,7 +9,7 @@
 
 <br />
 
-**AgroVision** es una plataforma web desarrollada en Python con el framework **Django** para el Semillero de Datos y Decisiones de la **Universidad de Pamplona**. Funciona como un orquestador centralizado (*AI File Manager y Plataforma de Inferencia*) para gestionar, documentar y ejecutar modelos de Machine Learning aplicados principalmente al sector agrícola.
+**AgroVision** es una plataforma web desarrollada en Python con el framework **Django** para el Semillero de Datos y Decisiones de l **ISER**. Funciona como un orquestador centralizado (*AI File Manager y Plataforma de Inferencia*) para gestionar, documentar y ejecutar modelos de Machine Learning aplicados principalmente al sector agrícola.
 
 ## ✨ Características Principales
 

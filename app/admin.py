@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Archivo, ModeloML
+from .models import Archivo, ModeloML, HistorialEjecucion, Categoria
+
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ('nombre',)
+    search_fields = ('nombre',)
+
+admin.site.register(Categoria, CategoriaAdmin)
 
 class ArchivoAdmin(admin.ModelAdmin):
     list_display = ('nombre', 'usuario', 'descripcion_corta', 'fecha_subida')
@@ -22,3 +28,13 @@ class ModeloMLAdmin(admin.ModelAdmin):
     readonly_fields = ('fecha_creacion', 'fecha_actualizacion')
 
 admin.site.register(ModeloML, ModeloMLAdmin)
+
+class HistorialEjecucionAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'modelo', 'resultado', 'ubicacion', 'fecha_ejecucion')
+    list_filter = ('usuario', 'modelo', 'fecha_ejecucion')
+    search_fields = ('usuario__username', 'modelo__nombre', 'resultado', 'ubicacion')
+    readonly_fields = ('fecha_ejecucion',)
+    ordering = ('-fecha_ejecucion',)
+
+admin.site.register(HistorialEjecucion, HistorialEjecucionAdmin)
+
